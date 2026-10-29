@@ -1,0 +1,12 @@
+
+{
+  "name": "Recall — Offline Knowledge Manager",
+  "short_name": "Recall",
+  "description": "A private, offline-first personal knowledge manager.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111318",
+  "theme_color": "#171923",
+  "orientation": "any"
+}

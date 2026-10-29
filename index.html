@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#171923" />
+  <meta name="description" content="Recall — your private, offline-first knowledge manager." />
+
+  <title>Recall — Knowledge Manager</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">R</div>
+        <div>
+          <h1>RECALL</h1>
+          <p>Your second brain</p>
+        </div>
+      </div>
+
+      <button id="newNoteBtn" class="primary-btn">
+        <span>＋</span> New note
+      </button>
+
+      <div class="search-box">
+        <span>⌕</span>
+        <input id="searchInput" type="search"
+          placeholder="Search notes..." autocomplete="off" />
+        <kbd>Ctrl K</kbd>
+      </div>
+
+      <nav class="navigation">
+        <button class="nav-item active" data-view="all">
+          <span>▤</span> All notes
+          <span id="allCount" class="count">0</span>
+        </button>
+
+        <button class="nav-item" data-view="pinned">
+          <span>📌</span> Pinned
+        </button>
+
+        <button class="nav-item" data-view="recent">
+          <span>◷</span> Recent
+        </button>
+
+        <button class="nav-item" data-view="trash">
+          <span>♲</span> Trash
+        </button>
+      </nav>
+
+      <div class="section-heading">
+        <span>FOLDERS</span>
+        <button id="addFolderBtn" title="Add folder">＋</button>
+      </div>
+
+      <div id="folderList" class="folder-list"></div>
+
+      <div class="section-heading">
+        <span>TAGS</span>
+      </div>
+
+      <div id="tagList" class="tag-list"></div>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <div>
+          <strong>Local storage</strong>
+          <small>Your notes stay on this device</small>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Notes list -->
+    <section class="notes-panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">YOUR WORKSPACE</p>
+          <h2 id="viewTitle">All notes</h2>
+        </div>
+        <span id="noteCount" class="muted">0 notes</span>
+      </div>
+
+      <div id="notesList" class="notes-list"></div>
+
+      <div id="emptyNotes" class="empty-state">
+        <div class="empty-icon">▤</div>
+        <h3>No notes found</h3>
+        <p>Create a note to start building your knowledge base.</p>
+        <button id="emptyNewNoteBtn" class="primary-btn">
+          Create your first note
+        </button>
+      </div>
+    </section>
+
+    <!-- Editor -->
+    <main class="editor-panel">
+      <div class="editor-toolbar">
+        <div class="breadcrumb">
+          <span>Recall</span>
+          <span>/</span>
+          <span id="breadcrumbTitle">Untitled</span>
+        </div>
+
+        <div class="toolbar-actions">
+          <span id="saveStatus" class="save-status">All changes saved</span>
+
+          <button id="pinBtn" class="icon-btn" title="Pin note">
+            📌
+          </button>
+
+          <button id="historyBtn" class="icon-btn" title="Version history">
+            ◷
+          </button>
+
+          <button id="backlinksBtn" class="icon-btn" title="Backlinks">
+            ↗
+          </button>
+
+          <button id="deleteBtn" class="icon-btn danger" title="Move to trash">
+            ♲
+          </button>
+        </div>
+      </div>
+
+      <div id="editorEmpty" class="editor-empty">
+        <div class="empty-icon">✎</div>
+        <h2>Your ideas live here.</h2>
+        <p>Select a note or create a new one.</p>
+        <button id="editorNewNoteBtn" class="primary-btn">
+          Create a note
+        </button>
+      </div>
+
+      <div id="noteEditor" class="note-editor hidden">
+        <input
+          id="noteTitle"
+          class="title-input"
+          type="text"
+          placeholder="Untitled note"
+          maxlength="200"
+        />
+
+        <div class="note-meta">
+          <label>
+            Folder
+            <select id="noteFolder">
+              <option value="">No folder</option>
+            </select>
+          </label>
+
+          <label>
+            Tags
+            <input id="noteTags" type="text"
+              placeholder="ideas, study, work" />
+          </label>
+        </div>
+
+        <div class="editor-tabs">
+          <button id="editTab" class="tab-btn active">Markdown</button>
+          <button id="previewTab" class="tab-btn">Preview</button>
+          <button id="splitTab" class="tab-btn">Split view</button>
+        </div>
+
+        <div id="writingArea" class="writing-area">
+          <textarea
+            id="noteContent"
+            spellcheck="true"
+            placeholder="# Start writing...
+
+Use Markdown to organize your thoughts.
+
+## Example
+- Add ideas
+- Write notes
+- Connect knowledge with [[Another Note]]
+"
+          ></textarea>
+
+          <article id="markdownPreview" class="markdown-preview"></article>
+        </div>
+
+        <div class="editor-footer">
+          <span id="wordCount">0 words</span>
+          <span>Markdown supported</span>
+          <span id="updatedAt">Not saved yet</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Command palette -->
+  <div id="commandPalette" class="modal hidden">
+    <div class="modal-card command-card">
+      <input id="commandInput" placeholder="Type a command..." />
+      <div id="commandResults"></div>
+      <p class="modal-hint">Esc to close · Enter to run</p>
+    </div>
+  </div>
+
+  <!-- Reusable dialog -->
+  <div id="dialog" class="modal hidden">
+    <div class="modal-card">
+      <h2 id="dialogTitle">Confirm</h2>
+      <p id="dialogMessage"></p>
+      <div id="dialogBody"></div>
+      <div class="dialog-actions">
+        <button id="dialogCancel" class="secondary-btn">Cancel</button>
+        <button id="dialogConfirm" class="primary-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <input id="importFile" type="file"
+    accept=".json,.md,.markdown,text/markdown,application/json"
+    hidden />
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
